@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StriverDev - Telegram Bot Developer</title>
+    <style>
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-semibold-webfont.woff2') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SF Pro Display';
+            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-bold-webfont.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #000000;
+            --text-secondary: #666666;
+            --accent: #000000;
+            --border: #e0e0e0;
+            --card-bg: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent: #ffffff;
+            --border: #2a2a2a;
+            --card-bg: #141414;
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar Styling */
+        body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        body::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        body::-webkit-scrollbar-thumb {
+            background: var(--text-primary);
+            border-radius: 10px;
+        }
+
+        body::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* For Firefox */
+        body {
+            scrollbar-width: thin;
+            scrollbar-color: var(--text-primary) var(--bg-secondary);
+        }
+
+        .sf-symbol {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Icons', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            display: inline-block;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 0;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -1px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-icon {
+            transition: opacity 0.3s ease;
+        }
+
+        .logo-icon.hidden {
+            opacity: 0;
+            position: absolute;
+        }
+
+        .code-text {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--text-primary);
+            white-space: pre;
+            margin: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .code-text.visible {
+            opacity: 1;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            color: var(--text-primary);
+            padding: 0;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+
+        .theme-icon {
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            width: 32px;
+            height: 32px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 0;
+            animation: fadeIn 1s ease;
+        }
+
+        .hero h1 {
+            font-size: clamp(48px, 8vw, 72px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+            animation: slideInLeft 0.8s ease;
+        }
+
+        .hero .subtitle {
+            font-size: 24px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            animation: slideInLeft 0.8s ease 0.2s backwards;
+        }
+
+        .hero .description {
+            max-width: 600px;
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            animation: slideInLeft 0.8s ease 0.4s backwards;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.6s backwards;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border: 2px solid var(--text-primary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            z-index: 10;
+        }
+
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--text-primary);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn:hover:before {
+            left: 0;
+        }
+
+        .btn:hover {
+            color: var(--bg-primary);
+        }
+
+        /* Skills Section */
+        .section {
+            padding: 80px 0;
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 60px;
+            letter-spacing: -1px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .skill-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-radius: 16px;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .section.visible .skill-card {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .skill-card:nth-child(1) {
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s;
+        }
+
+        .skill-card:nth-child(2) {
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s;
+        }
+
+        .skill-card:nth-child(3) {
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s;
+        }
+
+        .skill-card:nth-child(4) {
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s;
+        }
+
+        .skill-card:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--text-primary);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .skill-card:hover:before {
+            transform: translateX(0);
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px) !important;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .skill-card h3 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .skill-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Projects */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .project-card {
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: var(--card-bg);
+            border-radius: 16px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .section.visible .project-card {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .project-card:nth-child(1) {
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.1s;
+        }
+
+        .project-card:nth-child(2) {
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s;
+        }
+
+        .project-card:hover {
+            transform: scale(1.02) !important;
+            box-shadow: 0 20px 40px var(--shadow);
+        }
+
+        .project-image {
+            width: 100%;
+            padding-top: 42.55%;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            opacity: 1;
+            transition: opacity 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .project-image video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .project-card:hover .project-image {
+            opacity: 0.2;
+        }
+
+        .project-content {
+            padding: 30px;
+        }
+
+        .project-content h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .project-content p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 5px 12px;
+            border: 1px solid var(--border);
+            font-size: 12px;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+        }
+
+        .project-card:hover .tag {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border-color: var(--text-primary);
+        }
+
+        /* Contact */
+        .contact-info {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 18px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .contact-item:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--text-primary);
+            transition: width 0.3s ease;
+        }
+
+        .contact-item:hover:after {
+            width: 100%;
+        }
+
+        .contact-item:hover {
+            color: var(--text-primary);
+            transform: translateX(5px);
+        }
+
+        /* Footer */
+        footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            margin-top: 100px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* Snow Animation */
+        .snowflake {
+            position: fixed;
+            top: -10px;
+            z-index: 1;
+            user-select: none;
+            cursor: default;
+            animation: fall linear forwards;
+            color: var(--text-primary);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 48px;
+            }
+            
+            .section-title {
+                font-size: 36px;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo" onclick="triggerCodeAnimation()">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9.5 21L4 16L9.5 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22.5 11L28 16L22.5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M19 7L13 25" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <pre class="code-text" id="codeText"></pre>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <svg class="theme-icon sun-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                    <circle cx="16" cy="16" r="6" stroke="currentColor" stroke-width="2"/>
+                    <path d="M16 4V6M16 26V28M28 16H26M6 16H4M24.485 7.515L23.071 8.929M8.929 23.071L7.515 24.485M24.485 24.485L23.071 23.071M8.929 8.929L7.515 7.515" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg class="theme-icon moon-icon" width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M28 17.053A11 11 0 1 1 14.947 4 8.5 8.5 0 0 0 28 17.053z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </header>
+
+        <section class="hero">
+            <h1>StriverDev</h1>
+            <p class="subtitle">Telegram Bot Developer</p>
+            <p class="description">
+                Отлично специализирован по созданию абсолютно любых Telegram ботов.
+            </p>
+            <div class="cta-buttons">
+                <a href="#projects" class="btn">Мои проекты</a>
+                <a href="#contact" class="btn">Связаться</a>
+            </div>
+        </section>
+
+        <section class="section" id="skills">
+            <h2 class="section-title">Навыки</h2>
+            <div class="skills-grid">
+                <div class="skill-card">
+                    <h3>Frontend & Backend</h3>
+                    <p>Полный цикл разработки от интерфейса до серверной части. HTML, CSS, Node.js для создания комплексных веб-решений</p>
+                </div>
+                <div class="skill-card">
+                    <h3>UX/UI Design</h3>
+                    <p>Проектирование пользовательских интерфейсов с фокусом на удобство и визуальную привлекательность</p>
+                </div>
+                <div class="skill-card">
+                    <h3>Python Development</h3>
+                    <p>Разработка Telegram ботов с использованием aiogram, работа с JSON и создание автоматизированных решений</p>
+                </div>
+                <div class="skill-card">
+                    <h3>Mobile & Systems</h3>
+                    <p>Разработка iOS приложений на Swift и системное программирование на C++</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="projects">
+            <h2 class="section-title">Проекты</h2>
+            <div class="projects-grid">
+                <a href="https://t.me/task_zabot" target="_blank" class="project-card">
+                    <div class="project-image">
+                        <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;">
+                            <source src="задачник.mov" type="video/mp4">
+                            Ваш браузер не поддерживает видео.
+                        </video>
+                    </div>
+                    <div class="project-content">
+                        <h3>Задачник</h3>
+                        <p>Бот помогает людям структурировать жизнь, развивать дисциплину и осознанность через систематическое планирование и рефлексию</p>
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">aiogram</span>
+                            <span class="tag">JSON</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="https://t.me/shop_zabot" target="_blank" class="project-card">
+                    <div class="project-image">
+                        <video autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover;">
+                            <source src="магазин.mov" type="video/mp4">
+                            Ваш браузер не поддерживает видео.
+                        </video>
+                    </div>
+                    <div class="project-content">
+                        <h3>Магазин</h3>
+                        <p>Индивидуальный магазин цифровых товаров в Telegram. Платежка: CryptoBot</p>
+                        <div class="project-tags">
+                            <span class="tag">Python</span>
+                            <span class="tag">aiogram</span>
+                            <span class="tag">JSON</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="section" id="contact">
+            <h2 class="section-title">Контакты</h2>
+            <div class="contact-info">
+                <a href="mailto:nikitanikitovb@mail.ru" class="contact-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="sf-symbol">
+                        <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <path d="M22 7L12 13L2 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span>nikitanikitovb@mail.ru</span>
+                </a>
+                <a href="https://t.me/StriverDev" class="contact-item">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="sf-symbol">
+                        <path d="M21 2L14 21L10 13L2 9L21 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10 13L21 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Telegram</span>
+                </a>
+            </div>
+        </section>
+
+        <footer>
+            <p>© 2025 StriverDev. Создано с вайбом.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Code Animation
+        let isAnimating = false;
+        
+        function triggerCodeAnimation() {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            const logoIcon = document.querySelector('.logo-icon');
+            const codeText = document.getElementById('codeText');
+            const code = `main( ) {
+        printf("hello, world");
+}`;
+            
+            logoIcon.classList.add('hidden');
+            codeText.classList.add('visible');
+            codeText.textContent = '';
+            
+            let index = 0;
+            const typingInterval = setInterval(() => {
+                if (index < code.length) {
+                    codeText.textContent += code[index];
+                    index++;
+                } else {
+                    clearInterval(typingInterval);
+                    setTimeout(() => {
+                        codeText.classList.remove('visible');
+                        setTimeout(() => {
+                            logoIcon.classList.remove('hidden');
+                            codeText.textContent = '';
+                            isAnimating = false;
+                        }, 300);
+                    }, 5000);
+                }
+            }, 50);
+        }
+
+        // Snow animation
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.style.left = Math.random() * 100 + '%';
+            snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+            snowflake.style.opacity = Math.random() * 0.6 + 0.4;
+            snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+            snowflake.innerHTML = '❄';
+            document.body.appendChild(snowflake);
+
+            setTimeout(() => {
+                snowflake.remove();
+            }, 5000);
+        }
+
+        setInterval(createSnowflake, 200);
+
+        // Theme management
+        function applyTheme() {
+            const html = document.documentElement;
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (isDark) {
+                html.setAttribute('data-theme', 'dark');
+                if (sunIcon && moonIcon) {
+                    sunIcon.style.display = 'block';
+                    moonIcon.style.display = 'none';
+                }
+            } else {
+                html.removeAttribute('data-theme');
+                if (sunIcon && moonIcon) {
+                    sunIcon.style.display = 'none';
+                    moonIcon.style.display = 'block';
+                }
+            }
+        }
+
+        // Toggle theme manually
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            const sunIcon = document.querySelector('.sun-icon');
+            const moonIcon = document.querySelector('.moon-icon');
+            
+            if (newTheme === 'dark') {
+                html.setAttribute('data-theme', 'dark');
+                sunIcon.style.display = 'block';
+                moonIcon.style.display = 'none';
+            } else {
+                html.removeAttribute('data-theme');
+                sunIcon.style.display = 'none';
+                moonIcon.style.display = 'block';
+            }
+        }
+
+        // Apply theme on load and listen for system changes
+        window.addEventListener('DOMContentLoaded', () => {
+            // Apply system theme immediately
+            applyTheme();
+
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                applyTheme();
+            });
+
+            // Intersection Observer for animations
+            const sections = document.querySelectorAll('.section');
+            const options = {
+                threshold: 0.15,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, options);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // Smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
