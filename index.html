@@ -527,8 +527,8 @@
             user-select: none;
             cursor: default;
             animation: fall linear forwards;
-            color: #ffffff !important;
-            opacity: 0.8;
+            color: var(--text-primary);
+            opacity: 0.3;
             pointer-events: none;
             filter: none;
             -webkit-filter: none;
@@ -962,7 +962,7 @@
         snowflake.className = 'snowflake';
         snowflake.style.left = Math.random() * 100 + '%';
         snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
-        snowflake.style.opacity = Math.random() * 0.6 + 0.4;
+        snowflake.style.opacity = Math.random() * 0.4 + 0.2;
         snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
         snowflake.innerHTML = '❅';
         document.body.appendChild(snowflake);
