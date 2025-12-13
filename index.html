@@ -499,9 +499,11 @@
             user-select: none;
             cursor: default;
             animation: fall linear forwards;
-            color: #ffffff;
+            color: #ffffff !important;
             opacity: 0.8;
             pointer-events: none;
+            filter: none;
+            -webkit-filter: none;
         }
 
         @keyframes fall {
@@ -853,6 +855,7 @@
         snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
         snowflake.style.opacity = Math.random() * 0.6 + 0.4;
         snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
+        snowflake.style.color = '#ffffff';
         snowflake.innerHTML = '❄';
         document.body.appendChild(snowflake);
 
