@@ -4,20 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StriverDev - Telegram Bot Developer</title>
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1106JBC977"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-
-        gtag('js', new Date());
-        gtag('config', 'G-1106JBC977');
-    </script>
-
     <style>
         @font-face {
             font-family: 'SF Pro Display';
@@ -884,15 +870,6 @@
 
     <footer>
         <p>© 2025 StriverDev. Создано с вайбом.</p>
-        <p style="margin-top: 10px; font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 12C1 12 5 4 12 4C19 4 23 12 23 12C23 12 19 20 12 20C5 20 1 12 1 12Z" stroke="currentColor"
-                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round"/>
-            </svg>
-            <span>Визитов: <span id="visitor-count">...</span></span>
-        </p>
     </footer>
 </div>
 
@@ -1118,27 +1095,6 @@
             });
         });
     });
-
-    // Счетчик визитов через бесплатный API
-    async // Локальный счетчик визитов
-    function updateVisitorCount() {
-        // Проверяем, первый ли это визит в этой сессии
-        if (!sessionStorage.getItem('session-counted')) {
-            sessionStorage.setItem('session-counted', 'true');
-
-            // Увеличиваем общий счетчик
-            let totalVisits = parseInt(localStorage.getItem('total-visits') || '0');
-            totalVisits++;
-            localStorage.setItem('total-visits', totalVisits);
-        }
-
-        // Показываем количество визитов
-        const visits = localStorage.getItem('total-visits') || '1';
-        document.getElementById('visitor-count').textContent = visits;
-    }
-
-    // Вызов при загрузке страницы
-    updateVisitorCount();
 </script>
 
 </body>
