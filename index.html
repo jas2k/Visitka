@@ -784,7 +784,7 @@
                 </svg>
                 <span>Telegram</span>
             </a>
-            <a href="https://youtube.com/@yourchannel" target="_blank" class="contact-item">
+            <a href="https://www.youtube.com/@StriverDev" target="_blank" class="contact-item">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
                      class="sf-symbol">
                     <path d="M22.54 6.42C22.4212 5.94541 22.1793 5.51057 21.8387 5.15941C21.498 4.80824 21.0708 4.55318 20.6 4.42C18.88 4 12 4 12 4C12 4 5.12 4 3.4 4.46C2.92925 4.59318 2.50198 4.84824 2.16135 5.19941C1.82071 5.55057 1.57879 5.98541 1.46 6.46C1.14521 8.20556 0.991228 9.97631 1 11.75C0.988771 13.537 1.14275 15.3213 1.46 17.08C1.59096 17.5398 1.83831 17.9581 2.17695 18.2945C2.51559 18.6308 2.93527 18.8738 3.4 19C5.12 19.46 12 19.46 12 19.46C12 19.46 18.88 19.46 20.6 19C21.0708 18.8668 21.498 18.6118 21.8387 18.2606C22.1793 17.9094 22.4212 17.4746 22.54 17C22.8524 15.3011 23.0064 13.5769 23 11.85C23.0112 10.063 22.8572 8.27867 22.54 6.52V6.42Z"
@@ -811,6 +811,61 @@
 </div>
 
 <script>
+    // Создание аудио контекста для звука печатания
+    let audioContext;
+    let typingSoundEnabled = true;
+    let volumeLevel = 1.0;
+
+    function initAudio() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function createTypingSound() {
+        if (!audioContext) return null;
+
+        const oscillator1 = audioContext.createOscillator();
+        const oscillator2 = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        const filter = audioContext.createBiquadFilter();
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1000, audioContext.currentTime);
+        filter.Q.setValueAtTime(0.4, audioContext.currentTime);
+
+        oscillator1.connect(gainNode);
+        oscillator2.connect(gainNode);
+        gainNode.connect(filter);
+        filter.connect(audioContext.destination);
+
+        oscillator1.type = 'triangle';
+        oscillator1.frequency.setValueAtTime(120 + Math.random() * 60, audioContext.currentTime);
+        oscillator1.frequency.exponentialRampToValueAtTime(40, audioContext.currentTime + 0.05);
+
+        oscillator2.type = 'triangle';
+        oscillator2.frequency.setValueAtTime(600 + Math.random() * 300, audioContext.currentTime);
+        oscillator2.frequency.exponentialRampToValueAtTime(150, audioContext.currentTime + 0.02);
+
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.015 * volumeLevel, audioContext.currentTime + 0.005);
+        gainNode.gain.exponentialRampToValueAtTime(0.003 * volumeLevel, audioContext.currentTime + 0.08);
+
+        oscillator1.start(audioContext.currentTime);
+        oscillator1.stop(audioContext.currentTime + 0.08);
+
+        oscillator2.start(audioContext.currentTime);
+        oscillator2.stop(audioContext.currentTime + 0.03);
+
+        return oscillator1;
+    }
+
+    function playTypingSound() {
+        if (typingSoundEnabled && audioContext) {
+            createTypingSound();
+        }
+    }
+
     // Code Animation
     let isAnimating = false;
 
@@ -820,6 +875,7 @@
 
         const logoIcon = document.querySelector('.logo-icon');
         const codeText = document.getElementById('codeText');
+        const typeSound = document.getElementById('typeSound');
         const code = `main( ) {
         printf("hello, world");
 }`;
@@ -832,6 +888,13 @@
         const typingInterval = setInterval(() => {
             if (index < code.length) {
                 codeText.textContent += code[index];
+
+                // Воспроизводим звук только для видимых символов (не пробелы и переносы)
+                if (code[index] !== ' ' && code[index] !== '\n') {
+                    initAudio();
+                    playTypingSound();
+                }
+
                 index++;
             } else {
                 clearInterval(typingInterval);
@@ -855,7 +918,8 @@
         snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
         snowflake.style.opacity = Math.random() * 0.6 + 0.4;
         snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
-        snowflake.innerHTML = '❅';
+        snowflake.style.color = '#ffffff';
+        snowflake.innerHTML = '❄';
         document.body.appendChild(snowflake);
 
         setTimeout(() => {
@@ -950,5 +1014,6 @@
         });
     });
 </script>
+
 </body>
 </html>
