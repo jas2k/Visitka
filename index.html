@@ -1120,14 +1120,21 @@
     });
 
     // Счетчик визитов через бесплатный API
-    async function updateVisitorCount() {
-        try {
-            const response = await fetch('https://api.countapi.xyz/hit/striverdev-portfolio/visits');
-            const data = await response.json();
-            document.getElementById('visitor-count').textContent = data.value;
-        } catch (error) {
-            document.getElementById('visitor-count').textContent = '---';
+    async // Локальный счетчик визитов
+    function updateVisitorCount() {
+        // Проверяем, первый ли это визит в этой сессии
+        if (!sessionStorage.getItem('session-counted')) {
+            sessionStorage.setItem('session-counted', 'true');
+
+            // Увеличиваем общий счетчик
+            let totalVisits = parseInt(localStorage.getItem('total-visits') || '0');
+            totalVisits++;
+            localStorage.setItem('total-visits', totalVisits);
         }
+
+        // Показываем количество визитов
+        const visits = localStorage.getItem('total-visits') || '1';
+        document.getElementById('visitor-count').textContent = visits;
     }
 
     // Вызов при загрузке страницы
